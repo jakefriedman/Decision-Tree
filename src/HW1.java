@@ -15,13 +15,13 @@ final class Attr
     double gain; //stores gain for this attribute
 }
 public class HW1 {
-	private static int numExs = 0; //stores number of examples in data
+	private static int numExs; //stores number of examples in data
 	//private static int attrCnt = 0; //stores number of attributes used
-	private static ArrayList attrs; //stores attr classes for each attribute, ordered index.
+	private static ArrayList<Attr> attrs; //stores attr classes for each attribute, ordered index.
 	private static char class0; //stores name of one class
 	private static char class1; //stores name of the other class
-	private static int c0cnt = 0;  //stores # of class 0 ex's counted
-	private static int c1cnt = 0; //stores # of class1 ex's counted
+	private static int c0cnt;  //stores # of class 0 ex's counted
+	private static int c1cnt; //stores # of class1 ex's counted
 	/**
 	 * Opens a file for reading input, returning a BufferedReader
 	 * @param name The name of the file to open
@@ -48,7 +48,7 @@ public class HW1 {
 		String line;
 		StringTokenizer s;
 		BufferedReader in = getFile(name);
-		int attrCount = 0; //counts number of classifying attributes
+		//int attrCount = 0; //counts number of classifying attributes
 		//initial file parsing, counts types of attributes and prepares static data structures
 		while((line = in.readLine())!= null){
 			s = new StringTokenizer(line, "\t\n\r\f, %#");  //<--will ignore given characters
@@ -77,16 +77,17 @@ public class HW1 {
 				store.name = attrname;
 				store.typecnt = new int[typescount];
 				store.classcnt = new int[typescount];
+				int k = attrs.size();
 				attrs.add(store);   //store this data structure in the ArrayList
 			}
 			else //don't parse actual examples, exit loop if one found
 				break;
 		}
-		attrCnt = attrCount; //set global var
+		//attrCnt = attrCount; //set global var
 		in.close(); //close reader
 	}
 	
-	private static void parseExs(String name, ArrayList l) throws IOException {
+	private static void parseExs(String name, ArrayList<Attr> l) throws IOException {
 		String line;
 		StringTokenizer s;
 		String attr;
@@ -129,7 +130,7 @@ public class HW1 {
 				}
 				else //attr is an attribute
 				{
-					Attr list = (Attr)l.get(j); //get struct containing info about this attr
+					Attr list = l.get(j); //get struct containing info about this attr
 					c = attr.charAt(0);
 					boolean done = false;
 					for(int n = 0; n < list.count; n++)
@@ -160,9 +161,16 @@ public class HW1 {
 	 * @param l the Arraylist with data on attribute
 	 * @return double containing gain or class entropy
 	 */
-	private static double calcGain(int index, ArrayList l) {
+	private static double calcGain(int index, ArrayList<Attr> l) {
 		double class_e;
-		double p = c0cnt/numExs; //Probability of ex in class0
+		double p;
+		try {
+			p = (double)c0cnt/(double)numExs; //Probability of ex in class0
+		}
+		catch (ArithmeticException e) //for divide by 0 errors
+		{
+			p = 0;
+		}
 		double q = 1 - p; //Probability of ex in class1
 		class_e = -(p*Math.log(p)/Math.log(2) + q*Math.log(q)/Math.log(2));
 		if (index < 0) //entropy for class
@@ -170,13 +178,25 @@ public class HW1 {
 		else //conditional entropy (class|attr) w/ attr specified by index
 		{
 			double cond_e = 0; //stores sum of individual conditional entropies for this attribute type
-			Attr a = (Attr)l.get(index);
+			Attr a = l.get(index);
 			for(int x = 0; x < a.count; x++)
 			{
-				double prob = a.typecnt[x]/numExs; //P(an example has this attribute)
-				double pos = a.classcnt[x]/a.typecnt[x]; //P(an example with this attribute is in class0)
+				double prob;
+				try{
+					prob = (double)a.typecnt[x]/(double)numExs; //P(an example has this attribute)
+				}
+				catch (ArithmeticException e)
+				{
+					prob = 0;
+				}
+				double pos;
+				if(prob != 0)
+					pos = (double)a.classcnt[x]/(double)a.typecnt[x]; //P(an example with this attribute is in class0)
+				else 
+					pos = 0;
 				double neg  = 1 - pos;
-				cond_e += -1*prob*(pos*Math.log(pos)/Math.log(2) + neg*Math.log(neg)/Math.log(2));
+				if(pos < 1 && pos > 0)	//prevent NaN from appearing
+					cond_e += -1*prob*(pos*Math.log(pos)/Math.log(2) + neg*Math.log(neg)/Math.log(2));
 			}
 			double gain = class_e - cond_e;
 			a.gain = gain;
@@ -190,7 +210,7 @@ public class HW1 {
 	 * @param l List of attributes
 	 * @return int containing index of best attribute
 	 */
-	private static int findMaxGain(ArrayList l) {
+	private static int findMaxGain(ArrayList<Attr> l) {
 		double max = 0;
 		int best = 0;
 		for (int i = 0; i < l.size(); i++)
@@ -205,13 +225,13 @@ public class HW1 {
 		return best;
 	}
 	
-	private static void printGain(ArrayList l) {
+	private static void printGain(ArrayList<Attr> l) {
 		for (int n = 0; n < l.size(); n++)
 		{
-			Attr a = (Attr)l.get(n);
+			Attr a = l.get(n);
 			String name = a.name;
 			double gain = a.gain;
-			System.out.println(name + gain);
+			System.out.println(name + " " + gain);
 		}
 	}
 	
@@ -267,7 +287,7 @@ public class HW1 {
 		System.exit(0);
 	}
 	
-	public static void main(String[] args) throws FileNotFoundException, NumberFormatException{
+	public static void main(String[] args) throws NumberFormatException, IOException{
 		
 		//check for valid command line arguments
 		if (args.length != 4)
@@ -275,7 +295,7 @@ public class HW1 {
 		int mode = Integer.parseInt(args[0]);
 		if(mode > 6 || mode < 0)
 			errout(2,null);
-		
+		attrs = new ArrayList<Attr>();
 		setAttr(args[1]); //Initialize static class data from training data
 		switch(mode)
 		{
@@ -291,10 +311,10 @@ public class HW1 {
 		case 2:
 			parseExs(args[1], attrs);
 			buildTree();
-			classify(test);
+			//classify(test);
 			break;
 		case 3:
-			findGain(args[1]);
+			//findGain(args[1]);
 			buildTree();
 			break;
 		case 4:
