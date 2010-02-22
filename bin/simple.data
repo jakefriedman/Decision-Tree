@@ -1,0 +1,49 @@
+// Mushroom dataset from UC-Irvine archive of machine learning datasets
+// modified to remove some of the attributes specifically for this CS540 class
+//
+//classification: e=edible, p=poisonous
+//
+// attribute values:
+//     1. cap-shape:                bell=b,conical=c,convex=x,flat=f,knobbed=k,sunken=s
+//     2. cap-surface:              fibrous=f,grooves=g,scaly=y,smooth=s
+//     3. cap-color:                brown=n,buff=b,cinnamon=c,gray=g,green=r,pink=p,purple=u,red=e,white=w,yellow=y
+//     4. bruises?:                 bruises=t,no=f
+//     5. odor:                     almond=a,anise=l,creosote=c,fishy=y,foul=f,musty=m,none=n,pungent=p,spicy=s
+//     6. gill-attachment:          attached=a,descending=d,free=f,notched=n
+//     7. gill-spacing:             close=c,crowded=w,distant=d
+//     8. gill-size:                broad=b,narrow=n
+//     9. gill-color:               black=k,brown=n,buff=b,chocolate=h,gray=g,green=r,orange=o,pink=p,purple=u,red=e,white=w,yellow=y
+//    10. stalk-shape:              enlarging=e,tapering=t
+//    11. stalk-root:               bulbous=b,club=c,cup=u,equal=e,rhizomorphs=z,rooted=r
+//    12. stalk-surface-above-ring: ibrous=f,scaly=y,silky=k,smooth=s
+//    13. stalk-surface-below-ring: ibrous=f,scaly=y,silky=k,smooth=s
+//    14. stalk-color-above-ring:   brown=n,buff=b,cinnamon=c,gray=g,orange=o,pink=p,red=e,white=w,yellow=y
+//    15. stalk-color-below-ring:   brown=n,buff=b,cinnamon=c,gray=g,orange=o,pink=p,red=e,white=w,yellow=y
+//
+// Begin attribute domain list
+%%,e,p
+##,CapShape,b,c,x,f,k,s
+##,CapSurface,f,g,y,s
+##,CapColor,n,b,c,g,r,p,u,e,w,y
+##,Bruises,t,f
+##,Odor,a,l,c,y,f,m,n,p,s
+##,GillAttachment,a,d,f,n
+##,GillSpacing,c,w,d
+##,GillSize,b,n
+##,GillColor,k,n,b,h,g,r,o,p,u,e,w,y
+##,StalkShape,e,t
+##,StalkRoot,b,c,u,e,z,r
+##,StalkSurfaceAboveRing,f,y,k,s
+##,StalkSurfaceBelowRing,f,y,k,s
+##,StalkColorAboveRing,n,b,c,g,o,p,e,w,y
+##,StalkColorBelowRing,n,b,c,g,o,p,e,w,y
+// End attribute domain list
+// Begin training data
+Ex2001,e,x,f,n,t,n,f,c,b,w,t,b,s,s,g,g
+Ex2002,e,x,y,e,t,n,f,c,b,u,t,b,s,s,g,w
+Ex2003,e,f,s,n,f,n,f,w,b,k,t,e,f,f,w,w
+Ex2004,e,x,f,n,t,n,f,c,b,w,t,b,s,s,g,g
+Ex2005,p,f,y,w,t,p,f,c,n,p,e,e,s,s,w,w
+Ex2006,e,x,y,y,t,l,f,c,b,n,e,r,s,y,w,w
+Ex2007,p,f,s,n,t,p,f,c,n,p,e,e,s,s,w,w
+Ex2008,e,f,f,w,f,n,f,w,b,h,t,e,f,s,w,w
